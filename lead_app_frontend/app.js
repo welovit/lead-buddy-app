@@ -6,6 +6,7 @@
 
 (() => {
   const API_BASE = 'https://lead-buddy-backend.onrender.com';
+  
   // DOM elements
   const authSection = document.getElementById('auth-section');
   const mainSection = document.getElementById('main-section');
