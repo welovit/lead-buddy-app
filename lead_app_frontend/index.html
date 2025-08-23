@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lead Buddy</title>
+  <!-- Local stylesheet for basic styling -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <h1>Lead Buddy</h1>
+    <!-- Authentication section -->
+    <div id="auth-section">
+      <p>Please sign in or register to access your leads.</p>
+      <div id="auth-tabs">
+        <button id="login-tab" class="tab-button active">Login</button>
+        <button id="register-tab" class="tab-button">Register</button>
+      </div>
+      <div id="auth-forms">
+        <!-- Login form -->
+        <form id="login-form" class="auth-form">
+          <label>Email
+            <input type="email" id="login-email" required />
+          </label>
+          <label>Password
+            <input type="password" id="login-password" required />
+          </label>
+          <button type="submit">Login</button>
+        </form>
+        <!-- Registration form -->
+        <form id="register-form" class="auth-form hidden">
+          <label>Name
+            <input type="text" id="register-name" required />
+          </label>
+          <label>Email
+            <input type="email" id="register-email" required />
+          </label>
+          <label>Password
+            <input type="password" id="register-password" required />
+          </label>
+          <label>Phone
+            <input type="tel" id="register-phone" />
+          </label>
+          <label>Company Name
+            <input type="text" id="register-company" />
+          </label>
+          <label>Company Overview
+            <textarea id="register-overview" rows="3"></textarea>
+          </label>
+          <label>Timezone
+            <input type="text" id="register-timezone" placeholder="Europe/London" />
+          </label>
+          <div class="preferences">
+            <label>Preferred Countries (comma‑separated)
+              <input type="text" id="register-countries" placeholder="United States, Canada" />
+            </label>
+            <label>Preferred Category IDs (comma‑separated)
+              <input type="text" id="register-categories" placeholder="1,2" />
+              <small>View available categories after logging in.</small>
+            </label>
+          </div>
+          <button type="submit">Register</button>
+        </form>
+      </div>
+      <div id="auth-error" class="error-message"></div>
+    </div>
+
+    <!-- Main app section -->
+    <div id="main-section" class="hidden">
+      <div id="user-info">
+        <strong>Welcome, <span id="user-name"></span></strong>
+        <div class="user-actions">
+          <button id="settings-button" class="settings-button">Settings</button>
+          <button id="logout-button" class="logout-button">Logout</button>
+        </div>
+      </div>
+      <div id="categories-list" class="categories"></div>
+      <hr />
+      <div id="leads-section">
+        <h2>Your Leads</h2>
+        <button id="refresh-leads">Refresh Leads</button>
+        <button id="manage-leads-button" class="secondary-button">Manage Leads</button>
+        <div id="leads-container"></div>
+      </div>
+      <!-- Manage leads section for viewing and updating all delivered leads -->
+      <div id="manage-leads-section" class="hidden">
+        <h2>Manage All Leads</h2>
+        <div class="manage-controls">
+          <label for="status-filter">Filter by status:</label>
+          <select id="status-filter">
+            <option value="">All</option>
+            <option value="not_interested">Not Interested</option>
+            <option value="maybe">Maybe</option>
+            <option value="interested">Interested</option>
+          </select>
+          <button id="back-to-daily" class="secondary-button">Back to Daily</button>
+        </div>
+        <div id="manage-leads-container"></div>
+      </div>
+      <!-- Settings form for updating profile -->
+      <div id="settings-section" class="hidden">
+        <h2>Edit Profile</h2>
+        <form id="settings-form" class="settings-form">
+          <label>Phone
+            <input type="text" id="settings-phone" />
+          </label>
+          <label>Company Name
+            <input type="text" id="settings-company" />
+          </label>
+          <label>Company Overview
+            <textarea id="settings-overview" rows="3"></textarea>
+          </label>
+          <label>Timezone
+            <input type="text" id="settings-timezone" />
+          </label>
+          <label>Preferred Countries (comma‑separated)
+            <input type="text" id="settings-countries" />
+          </label>
+          <label>Preferred Category IDs (comma‑separated)
+            <input type="text" id="settings-categories" />
+          </label>
+          <div class="settings-actions">
+            <button type="submit">Save</button>
+            <button type="button" id="settings-cancel">Cancel</button>
+          </div>
+        </form>
+        <div id="settings-error" class="error-message"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

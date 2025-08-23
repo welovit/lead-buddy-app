@@ -1,0 +1,299 @@
+/* Basic styling for Lead Buddy front‑end */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, sans-serif;
+  background-color: #f7f7f7;
+  color: #333;
+}
+
+#app {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 2rem;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Auth section */
+#auth-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tab-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #e0e0e0;
+  cursor: pointer;
+}
+
+.tab-button.active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.auth-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.auth-form input,
+.auth-form textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 4px;
+  font-size: 1rem;
+}
+
+.auth-form button {
+  margin-top: 12px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.auth-form button:hover {
+  background-color: #0056b3;
+}
+
+.error-message {
+  color: #b00020;
+  margin-top: 8px;
+}
+
+/* Main section */
+#user-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logout-button {
+  background-color: #f44336;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background-color: #d32f2f;
+}
+
+/* Settings section */
+#settings-section {
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+}
+
+#settings-section h2 {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.settings-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.settings-form input,
+.settings-form textarea {
+  width: 100%;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 4px;
+  font-size: 0.9rem;
+}
+
+.settings-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 12px;
+}
+
+.settings-form button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.settings-form button:hover {
+  background-color: #0056b3;
+}
+
+.settings-form button[type="button"] {
+  background-color: #757575;
+}
+
+.settings-form button[type="button"]:hover {
+  background-color: #616161;
+}
+
+/* User actions container */
+.user-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.settings-button {
+  background-color: #ff9800;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.settings-button:hover {
+  background-color: #fb8c00;
+}
+
+#categories-list {
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+#categories-list span {
+  display: inline-block;
+  margin-right: 8px;
+  background-color: #f0f0f0;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+#leads-section h2 {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+#refresh-leads {
+  margin-bottom: 12px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#refresh-leads:hover {
+  background-color: #388e3c;
+}
+
+#leads-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lead-card {
+  border: 1px solid #ddd;
+  padding: 12px;
+  border-radius: 6px;
+  background-color: #fafafa;
+}
+
+.lead-card h3 {
+  margin: 0 0 4px;
+  font-size: 1.2rem;
+}
+
+.lead-card .details {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.lead-card .actions {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lead-card select,
+.lead-card input[type="date"],
+.lead-card textarea {
+  width: 100%;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.lead-card button {
+  background-color: #2196f3;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.lead-card button:hover {
+  background-color: #1976d2;
+}
+
+/* Manage leads section */
+#manage-leads-section {
+  margin-top: 24px;
+}
+
+.manage-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+#manage-leads-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.secondary-button {
+  background-color: #757575;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.secondary-button:hover {
+  background-color: #616161;
+}
