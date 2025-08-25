@@ -5,7 +5,7 @@
 // served by the backend defined in lead_app_backend/lead_app_server.py.
 
 (() => {
-  const API_BASE = 'https://lead-buddy-backend.onrender.com';
+  const API_BASE = 'https://srv-d2knqgripnbc73fbi8eg';
   
   // DOM elements
   const authSection = document.getElementById('auth-section');
