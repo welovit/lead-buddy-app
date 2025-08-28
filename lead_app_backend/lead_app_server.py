@@ -889,5 +889,7 @@ def run_server(server_class=HTTPServer, handler_class=LeadAppRequestHandler, por
 if __name__ == "__main__":
     # Initialize database on first run
     init_db()
-    port = int(os.environ.get("PORT", "8000"))
+    port = int(os.environ.get("PORT", "8080"))
+    # Bind to 0.0.0.0 so it’s reachable outside the container
     run_server(port=port)
+
