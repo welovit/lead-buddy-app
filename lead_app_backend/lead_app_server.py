@@ -458,6 +458,7 @@ class LeadAppRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(b'{"status": "ok"}')
         return
 
+    # Existing routing
     parsed_path = urlparse(self.path)
     path = parsed_path.path
 
@@ -473,6 +474,7 @@ class LeadAppRequestHandler(BaseHTTPRequestHandler):
         self.handle_get_profile()
     else:
         self._send_json({"error": "Endpoint not found"}, status=404)
+
 
 
     def do_OPTIONS(self) -> None:
