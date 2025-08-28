@@ -450,19 +450,30 @@ class LeadAppRequestHandler(BaseHTTPRequestHandler):
             self._send_json({"error": "Endpoint not found"}, status=404)
 
     def do_GET(self) -> None:
-        parsed_path = urlparse(self.path)
-        path = parsed_path.path
-        if path == "/categories":
-            self.handle_get_categories()
-        elif path == "/leads/daily":
-            self.handle_get_daily_leads()
-        elif path == "/leads":
-            # Fetch leads delivered to the user, optionally filtered by status.
-            self.handle_get_user_leads()
-        elif path == "/user/profile":
-            self.handle_get_profile()
-        else:
-            self._send_json({"error": "Endpoint not found"}, status=404)
+    # Health check endpoint
+    if self.path == "/health":
+        self.send_response(200)
+        self.send_header("Content-type", "application/json")
+        self.end_headers()
+        self.wfile.write(b'{"status": "ok"}')
+        return
+
+    parsed_path = urlparse(self.path)
+    path = parsed_path.path
+
+    if path == "/categories":
+        self.handle_get_categories()
+    elif path == "/leads/daily":
+        self.handle_get_daily_leads()
+    elif path == "/leads":
+        self.handle_get_leads()
+    elif path == "/user/profile":
+        self.handle_get_user_leads()
+    elif path == "/profile":
+        self.handle_get_profile()
+    else:
+        self._send_json({"error": "Endpoint not found"}, status=404)
+
 
     def do_OPTIONS(self) -> None:
         """
