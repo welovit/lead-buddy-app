@@ -451,7 +451,7 @@ class LeadAppRequestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:
     # Health check endpoint
-    if self.path == "/health":
+        if self.path == "/health":
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
         self.end_headers()
