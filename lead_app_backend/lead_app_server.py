@@ -875,7 +875,7 @@ class LeadAppRequestHandler(BaseHTTPRequestHandler):
 
 def run_server(server_class=HTTPServer, handler_class=LeadAppRequestHandler, port: int = 8000) -> None:
     """Run the HTTP server.  Press Ctrl+C to stop."""
-    server_address = ("", port)
+    server_address = ("", port)   # ← instead of ("localhost", port) or (None, port)
     httpd = server_class(server_address, handler_class)
     print(f"Lead App server running on http://localhost:{port}/")
     try:
