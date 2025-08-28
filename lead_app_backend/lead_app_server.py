@@ -453,9 +453,9 @@ class LeadAppRequestHandler(BaseHTTPRequestHandler):
     # Health check endpoint
     if self.path == "/health":
         self.send_response(200)
-        self.send_header("Content-type", "application/json")
+        self.send_header("Content-Type", "application/json")
         self.end_headers()
-        self.wfile.write(b'{"status": "ok"}')
+        self.wfile.write(b'{"status":"ok"}')
         return
 
     # Existing routing
@@ -474,6 +474,7 @@ class LeadAppRequestHandler(BaseHTTPRequestHandler):
         self.handle_get_profile()
     else:
         self._send_json({"error": "Endpoint not found"}, status=404)
+
 
 
 
