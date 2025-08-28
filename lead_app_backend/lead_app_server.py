@@ -450,7 +450,7 @@ class LeadAppRequestHandler(BaseHTTPRequestHandler):
             self._send_json({"error": "Endpoint not found"}, status=404)
 
     def do_GET(self) -> None:
-    pass
+        pass
     # Health check endpoint
     if self.path == "/health":
         self.send_response(200)
