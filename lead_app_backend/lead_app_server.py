@@ -455,7 +455,7 @@ class LeadAppRequestHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
         self.end_headers()
-        self.wfile.write(b'{"status": "ok"}')
+        self.wfile.write(b'{"status":"ok"}')
         return
 
     # Existing routing
@@ -469,26 +469,26 @@ class LeadAppRequestHandler(BaseHTTPRequestHandler):
     elif path == "/leads":
         self.handle_get_leads()
     elif path == "/user/profile":
-        self.handle_get_user_leads()
+        self.handle_get_user_profile()
     elif path == "/profile":
         self.handle_get_profile()
     else:
         self._send_json({"error": "Endpoint not found"}, status=404)
 
-    def do_OPTIONS(self) -> None:
-        """
-        Respond to CORS preflight requests.  Browsers send an OPTIONS request
-        before certain POST requests to check allowed methods and headers.
-        """
-        # Always allow the same set of origins, methods and headers.  Note that
-        # the actual Access-Control-Allow-Origin value is set by
-        # `_set_json_headers`, so we reuse that here.
-        self.send_response(204)
-        self.send_header("Access-Control-Allow-Origin", "*")
-        # Include PUT for profile updates and other modifications
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT")
-        self.send_header("Access-Control-Allow-Headers", "Authorization, Content-Type")
-        self.end_headers()
+
+def do_OPTIONS(self) -> None:
+    """
+    Respond to CORS preflight requests. Browsers send an OPTIONS request
+    before certain POST requests to check allowed methods and headers.
+    """
+    # Always allow the same set of origins, methods and headers.
+    # The actual Access-Control-Allow-Origin value is set by
+    # `_set_json_headers()` when returning JSON.
+    self.send_response(204)  # No Content
+    self.send_header("Access-Control-Allow-Origin", "*")
+    self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT")
+    self.send_header("Access-Control-Allow-Headers", "Authorization, Content-Type")
+    self.end_headers()
 
     # Handler implementations
     def handle_register(self) -> None:
