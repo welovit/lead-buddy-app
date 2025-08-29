@@ -432,7 +432,7 @@ class LeadAppRequestHandler(BaseHTTPRequestHandler):
         token_list = params.get("token")
         return token_list[0] if token_list else None
 
-    def do_POST(self) -> None:
+      def do_POST(self) -> None:
         parsed_path = urlparse(self.path)
         path = parsed_path.path
         if path == "/register":
@@ -444,55 +444,47 @@ class LeadAppRequestHandler(BaseHTTPRequestHandler):
         elif path == "/notes":
             self.handle_add_note()
         elif path == "/user/profile":
-            # Allow updating user profile via POST as a fallback for clients without PUT support
+            # Allow updating user profile via POST as a fallback for clients without PUT
             self.handle_update_profile()
         else:
             self._send_json({"error": "Endpoint not found"}, status=404)
 
-  def do_GET(self) -> None:
-      # Health check endpoint
-      if self.path == "/health":
-          self.send_response(200)
-          self.send_header("Content-Type", "application/json")
-          self.end_headers()
-          self.wfile.write(b'{"status":"ok"}')
-          return
+    def do_GET(self) -> None:
+        parsed_path = urlparse(self.path)
+        path = parsed_path.path
 
+        # Health check
+        if path == "/health":
+            self._send_json({"status": "ok"})
+            return
 
-    # Existing routing
-    parsed_path = urlparse(self.path)
-    path = parsed_path.path
+        # Routing
+        if path == "/categories":
+            self.handle_get_categories()
+        elif path == "/leads/daily":
+            self.handle_get_daily_leads()
+        elif path == "/leads":
+            self.handle_get_user_leads()   # ← correct method name
+        elif path in ("/user/profile", "/profile"):
+            self.handle_get_profile()      # ← correct method name
+        else:
+            self._send_json({"error": "Endpoint not found"}, status=404)
 
+    def do_OPTIONS(self) -> None:
+        """
+        Respond to CORS preflight requests. Browsers send an OPTIONS request
+        before certain POST/PUT requests to check allowed methods and headers.
+        """
+        self.send_response(204)  # No Content
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT")
+        self.send_header("Access-Control-Allow-Headers", "Authorization, Content-Type")
+        self.end_headers()
 
-    if path == "/categories":
-        self.handle_get_categories()
-    elif path == "/leads/daily":
-        self.handle_get_daily_leads()
-    elif path == "/leads":
-        self.handle_get_leads()
-    elif path == "/user/profile":
-        self.handle_get_user_profile()
-    elif path == "/profile":
-        self.handle_get_profile()
-    else:
-        self._send_json({"error": "Endpoint not found"}, status=404)
+    # ---------------------------
+    # Handlers (helpers below)
+    # ---------------------------
 
-
-def do_OPTIONS(self) -> None:
-    """
-    Respond to CORS preflight requests. Browsers send an OPTIONS request
-    before certain POST requests to check allowed methods and headers.
-    """
-    # Always allow the same set of origins, methods and headers.
-    # The actual Access-Control-Allow-Origin value is set by
-    # `_set_json_headers()` when returning JSON.
-    self.send_response(204)  # No Content
-    self.send_header("Access-Control-Allow-Origin", "*")
-    self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT")
-    self.send_header("Access-Control-Allow-Headers", "Authorization, Content-Type")
-    self.end_headers()
-
-    # Handler implementations
     def handle_register(self) -> None:
         data = self._parse_json_body()
         name = data.get("name")
@@ -507,29 +499,30 @@ def do_OPTIONS(self) -> None:
         timezone = data.get("timezone") or "UTC"
         countries = data.get("countries") or []
         categories = data.get("categories") or []
-        # Convert categories list to comma‑separated IDs if numeric; if names, try to look up ids
+
         conn = sqlite3.connect(DB_NAME)
         c = conn.cursor()
+
+        # categories → ids
         cat_ids: List[int] = []
         for cat in categories:
             if isinstance(cat, int):
                 cat_ids.append(cat)
             else:
-                # Look up by name
                 c.execute("SELECT id FROM category WHERE name = ?", (cat,))
                 row = c.fetchone()
                 if row:
                     cat_ids.append(row[0])
+
         cat_ids_str = ",".join(str(cid) for cid in cat_ids)
         country_str = ",".join(countries)
-        # Hash password
+
         password_hash = hash_password(password)
-        # Insert user
         try:
             c.execute(
                 """
                 INSERT INTO user (name, email, phone, password_hash, company_name, company_overview, timezone,
-                                 country_preferences, category_preferences, created_at)
+                                  country_preferences, category_preferences, created_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
@@ -559,6 +552,7 @@ def do_OPTIONS(self) -> None:
         if not email or not password:
             self._send_json({"error": "Email and password are required"}, status=400)
             return
+
         conn = sqlite3.connect(DB_NAME)
         c = conn.cursor()
         c.execute("SELECT id, password_hash FROM user WHERE email = ?", (email,))
@@ -567,12 +561,13 @@ def do_OPTIONS(self) -> None:
             conn.close()
             self._send_json({"error": "Invalid credentials"}, status=401)
             return
+
         user_id, stored_hash = row
         if not verify_password(password, stored_hash):
             conn.close()
             self._send_json({"error": "Invalid credentials"}, status=401)
             return
-        # Create a session token
+
         token = create_session(user_id)
         conn.close()
         self._send_json({"token": token})
@@ -581,10 +576,7 @@ def do_OPTIONS(self) -> None:
         conn = sqlite3.connect(DB_NAME)
         c = conn.cursor()
         c.execute("SELECT id, name, description FROM category ORDER BY name")
-        categories = [
-            {"id": row[0], "name": row[1], "description": row[2]}
-            for row in c.fetchall()
-        ]
+        categories = [{"id": row[0], "name": row[1], "description": row[2]} for row in c.fetchall()]
         conn.close()
         self._send_json({"categories": categories})
 
@@ -601,15 +593,6 @@ def do_OPTIONS(self) -> None:
         self._send_json({"leads": leads})
 
     def handle_get_user_leads(self) -> None:
-        """
-        Return all leads previously delivered to the authenticated user, optionally
-        filtered by status.  Query parameter `status` may be supplied to return
-        only leads with that status (case sensitive).  If omitted, all leads are
-        returned regardless of current status.  Leads include their delivery
-        date, status, next_action_date and any notes.
-
-        Example: GET /leads?status=maybe
-        """
         token = self._get_session_token()
         if not token:
             self._send_json({"error": "Authentication required"}, status=401)
@@ -618,12 +601,13 @@ def do_OPTIONS(self) -> None:
         if not user_id:
             self._send_json({"error": "Invalid or expired session"}, status=401)
             return
+
         parsed = urlparse(self.path)
         params = parse_qs(parsed.query)
         status_filter = params.get("status", [None])[0]
+
         conn = sqlite3.connect(DB_NAME)
         c = conn.cursor()
-        # Build query to join user_lead_status with lead, company and category
         base_query = (
             "SELECT lead.id, lead.full_name, lead.email, lead.phone, lead.country, "
             "company.name, category.name, uls.status, uls.next_action_date, "
@@ -638,45 +622,29 @@ def do_OPTIONS(self) -> None:
         if status_filter:
             base_query += " AND uls.status = ?"
             params_list.append(status_filter)
-        # Order by delivery date descending so most recent leads appear first
         base_query += " ORDER BY uls.delivery_date DESC, lead.full_name ASC"
         c.execute(base_query, params_list)
         rows = c.fetchall()
         conn.close()
+
         leads = []
-        for row in rows:
-            (
-                lead_id,
-                full_name,
-                email,
-                phone,
-                country,
-                company_name,
-                category_name,
-                status,
-                next_action_date,
-                delivery_date,
-                notes,
-                company_overview,
-                company_website,
-            ) = row
-            leads.append(
-                {
-                    "lead_id": lead_id,
-                    "full_name": full_name,
-                    "email": email,
-                    "phone": phone,
-                    "country": country,
-                    "company": company_name,
-                    "category": category_name,
-                    "status": status,
-                    "next_action_date": next_action_date,
-                    "delivery_date": delivery_date,
-                    "notes": notes,
-                    "company_overview": company_overview,
-                    "company_website": company_website,
-                }
-            )
+        for (lead_id, full_name, email, phone, country, company_name, category_name,
+             status, next_action_date, delivery_date, notes, company_overview, company_website) in rows:
+            leads.append({
+                "lead_id": lead_id,
+                "full_name": full_name,
+                "email": email,
+                "phone": phone,
+                "country": country,
+                "company": company_name,
+                "category": category_name,
+                "status": status,
+                "next_action_date": next_action_date,
+                "delivery_date": delivery_date,
+                "notes": notes,
+                "company_overview": company_overview,
+                "company_website": company_website,
+            })
         self._send_json({"leads": leads})
 
     def handle_lead_status_update(self) -> None:
@@ -691,11 +659,11 @@ def do_OPTIONS(self) -> None:
         data = self._parse_json_body()
         lead_id = data.get("lead_id")
         status = data.get("status")
-        next_action_date = data.get("next_action_date")  # string or None
+        next_action_date = data.get("next_action_date")
         if not lead_id or not status:
             self._send_json({"error": "lead_id and status are required"}, status=400)
             return
-        # Update user_lead_status
+
         conn = sqlite3.connect(DB_NAME)
         c = conn.cursor()
         c.execute(
@@ -729,13 +697,10 @@ def do_OPTIONS(self) -> None:
         if not lead_id or not content:
             self._send_json({"error": "lead_id and content are required"}, status=400)
             return
-        # Append note to existing notes (simple concatenation)
+
         conn = sqlite3.connect(DB_NAME)
         c = conn.cursor()
-        c.execute(
-            "SELECT notes FROM user_lead_status WHERE user_id = ? AND lead_id = ?",
-            (user_id, lead_id),
-        )
+        c.execute("SELECT notes FROM user_lead_status WHERE user_id = ? AND lead_id = ?", (user_id, lead_id))
         row = c.fetchone()
         if not row:
             conn.close()
@@ -745,16 +710,13 @@ def do_OPTIONS(self) -> None:
         timestamp = datetime.datetime.utcnow().isoformat()
         note_entry = f"[{timestamp}] {content}\n"
         updated_notes = existing_notes + note_entry
-        c.execute(
-            "UPDATE user_lead_status SET notes = ? WHERE user_id = ? AND lead_id = ?",
-            (updated_notes, user_id, lead_id),
-        )
+        c.execute("UPDATE user_lead_status SET notes = ? WHERE user_id = ? AND lead_id = ?",
+                  (updated_notes, user_id, lead_id))
         conn.commit()
         conn.close()
         self._send_json({"status": "ok"})
 
     def do_PUT(self) -> None:
-        """Handle HTTP PUT requests for updating resources."""
         parsed_path = urlparse(self.path)
         path = parsed_path.path
         if path == "/user/profile":
@@ -762,8 +724,8 @@ def do_OPTIONS(self) -> None:
         else:
             self._send_json({"error": "Endpoint not found"}, status=404)
 
-    # Profile handlers
     def handle_get_profile(self) -> None:
+    
         """Return the authenticated user’s profile and preferences."""
         token = self._get_session_token()
         if not token:
