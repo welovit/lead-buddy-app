@@ -390,20 +390,20 @@ class LeadAppRequestHandler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
 
     def end_headers(self) -> None:
-    # Send CORS headers on every response
-    self.send_header("Access-Control-Allow-Origin", "*")
-    self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-    self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        # Send CORS headers on every response
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
     super().end_headers()
 
 
   def _set_json_headers(self, status: int = 200) -> None:
-    self.send_response(status)
-    self.send_header("Content-Type", "application/json")
-    self.send_header("Access-Control-Allow-Origin", "*")
-    self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
-    self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
-    self.end_headers()
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        self.end_headers()
 
 
 
