@@ -406,6 +406,7 @@ class LeadAppRequestHandler(BaseHTTPRequestHandler):
     self.end_headers()
 
 
+
     def _send_json(self, data: Any, status: int = 200) -> None:
         response = json.dumps(data).encode("utf-8")
         self._set_json_headers(status)
