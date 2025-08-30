@@ -389,6 +389,14 @@ class LeadAppRequestHandler(BaseHTTPRequestHandler):
 
     protocol_version = "HTTP/1.1"
 
+    def end_headers(self) -> None:
+    # Send CORS headers on every response
+    self.send_header("Access-Control-Allow-Origin", "*")
+    self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+    self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+    super().end_headers()
+
+
     def _set_json_headers(self, status: int = 200) -> None:
         """
         Set common headers for JSON responses, including CORS headers.  This helper
@@ -473,19 +481,13 @@ class LeadAppRequestHandler(BaseHTTPRequestHandler):
             self._send_json({"error": "Endpoint not found"}, status=404)
 
     def do_OPTIONS(self) -> None:
-        """
-        Respond to CORS preflight requests.  Browsers send an OPTIONS request
-        before certain POST requests to check allowed methods and headers.
-        """
-        # Always allow the same set of origins, methods and headers.  Note that
-        # the actual Access-Control-Allow-Origin value is set by
-        # `_set_json_headers`, so we reuse that here.
-        self.send_response(204)
+        """Respond to CORS preflight requests."""
+        self.send_response(200)
         self.send_header("Access-Control-Allow-Origin", "*")
-        # Include PUT for profile updates and other modifications
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT")
-        self.send_header("Access-Control-Allow-Headers", "Authorization, Content-Type")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
         self.end_headers()
+
 
     # Handler implementations
     def handle_register(self) -> None:
