@@ -397,24 +397,14 @@ class LeadAppRequestHandler(BaseHTTPRequestHandler):
     super().end_headers()
 
 
-    def _set_json_headers(self, status: int = 200) -> None:
-        """
-        Set common headers for JSON responses, including CORS headers.  This helper
-        always sets `Access-Control-Allow-Origin` to `*` to allow browsers to
-        communicate with the API from other origins (e.g. a static front-end
-        served from a different port or file://).  If you wish to restrict
-        origins, modify the `Access-Control-Allow-Origin` value accordingly.
-        """
-        self.send_response(status)
-        self.send_header("Content-Type", "application/json")
-        # CORS headers
-        self.send_header("Access-Control-Allow-Origin", "*")
-        # Include PUT in allowed methods to support profile updates and other
-        # modifications from the browser.  Without PUT listed here, browsers
-        # performing a preflight request would reject cross-origin PUT calls.
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT")
-        self.send_header("Access-Control-Allow-Headers", "Authorization, Content-Type")
-        self.end_headers()
+  def _set_json_headers(self, status: int = 200) -> None:
+    self.send_response(status)
+    self.send_header("Content-Type", "application/json")
+    self.send_header("Access-Control-Allow-Origin", "*")
+    self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
+    self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+    self.end_headers()
+
 
     def _send_json(self, data: Any, status: int = 200) -> None:
         response = json.dumps(data).encode("utf-8")
