@@ -394,7 +394,7 @@ class LeadAppRequestHandler(BaseHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
-    super().end_headers()
+        super().end_headers()
 
 
   def _set_json_headers(self, status: int = 200) -> None:
